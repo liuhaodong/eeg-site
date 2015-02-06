@@ -1,0 +1,10 @@
+id	machine	subject	start_time	end_time	stim	block	cond
+1	software_management	bob	2014-02-28 01:01:10	2014-02-28 01:01:20	stim	block	6
+2	software_management	bob	2014-02-28 01:01:00	2014-02-28 01:01:10	stim	block	5
+3	software_management	bob	2014-02-28 01:00:50	2014-02-28 01:01:00	stim	block	5
+4	software_management	alice	2014-02-28 01:01:10	2014-02-28 01:01:20	stim	block	5
+5	software_management	alice	2014-02-28 01:01:00	2014-02-28 01:01:10	stim	block	5
+6	software_management	alice	2014-02-28 01:00:50	2014-02-28 01:01:00	stim	block	6
+7	software_management	bonobo	2014-02-28 01:01:10	2014-02-28 01:01:20	stim	block	5
+8	software_management	bonobo	2014-02-28 01:01:00	2014-02-28 01:01:10	stim	block	6
+9	software_management	bonobo	2014-02-28 01:00:50	2014-02-28 01:01:00	stim	block	6

@@ -1,0 +1,62 @@
+{% extends "nmbase.html" %}
+
+{% load staticfiles %}
+
+{%block main%}
+
+<h2> {{current_series.name}} </h2>
+
+<div class="panel-group" id="accordion">
+
+  <div class="panel panel-default" id="series_panel">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="collapser" data-toggle="collapse" data-target="#collapseOne" 
+           href="#collapseOne">
+          Series
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <div class="panel-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-4">
+              <div class='well'>
+                <a class="btn btn-primary" href="/EEG/market/setup/{{current_content_group.name}}?series={{current_series.name|urlencode}}">
+                  Setup Experiment
+                </a>
+                <br><br>
+                <a href="/EEG/market/delete/{{current_content_group.name}}?series={{current_series.name}}" class="btn btn-primary">
+                  Delete
+                </a>
+                <a href="#" id="rename-button" class="btn btn-primary">
+                  Rename
+                </a>
+                <input type="text" id="rename-box">
+                <br><br>
+                <ul>
+                  <li>sessions: {{num_views}}</li>
+                  <li>viewers: {{num_viewers}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('#rename-button').click(function() {
+    var new_name = $('#rename-box').val();
+    if (new_name.length > 0) {
+        window.location.href = "/EEG/market/rename/{{current_content_group.name}}?series={{current_series.name}}&name="+new_name;
+    }
+});
+</script>
+
+{%endblock main%}

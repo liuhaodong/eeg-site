@@ -1,0 +1,176 @@
+{% extends "experimentbase.html" %}
+
+{%block main%}
+{% load staticfiles %}
+
+<div id="series_container">
+    <div class="player">
+        <div class="player_controls">
+            <a class="play_button player_button" href="javascript:void(0);" onclick="first_start();">Play</a>
+            <a class="stop_button player_button" href="javascript:void(0);" onclick="delayed_stop(5000);">Stop</a>
+            <a class="resume_button player_button" href="javascript:void(0);" onclick="delayed_start(5000);">Resume</a>
+        </div>
+        <div id="current_content">
+            <h1 id="timer"></h1>
+            <h1 id="delay_timer"></h1>
+        </div>
+        <div id="message"><h1> The Experiment is Over </h1></div>
+    </div>
+</div>
+<script type="text/javascript">
+    
+    $(function() {
+        $("#message").hide();
+        args = {
+            content_group_name: '{{content_group_name}}',
+            viewer_names: [],
+            videos: []};
+
+        {% for viewer in viewers %}
+            args.viewer_names.push("{{viewer}}")
+        {% endfor %}
+        $(".player_button").hide();
+        $(".play_button").show();
+        reset_timer();
+        delay_timer_end = null;
+        setInterval(function() {
+            $('#timer').html(sec_to_str(check_timer()));
+            if (delay_timer_end) {
+                var now = new Date();
+                $('#delay_timer').html(delay_message + sec_to_str(delay_timer_end - now));
+                if (delay_timer_end < now) {
+                    delay_callback();
+                    delay_timer_end = null;
+                    $('#delay_timer').html('');
+                }
+            }
+        }, 100);
+    });
+
+    function startSession(callback) {
+        $.post('/EEG/API/start_session',
+                {'content_group_name': args.content_group_name,
+                'content_name': "{{content_name}}",
+                'csrfmiddlewaretoken': "{{csrf_token}}",
+                'content_time': check_timer() / 1000,
+                'viewer_name': JSON.stringify(args.viewer_names)}, // TODO: send auth token
+                callback)
+    }
+    
+    function stopSession(callback) {
+        $.post('/EEG/API/stop_session',
+                {'content_group_name': args.content_group_name,
+                'content_name': "{{content_name}}",
+                'session_name': current_session,
+                'csrfmiddlewaretoken': "{{csrf_token}}",
+                'content_time': check_timer() / 1000,
+                'viewer_name': JSON.stringify(args.viewer_names)}, // TODO: send auth token
+                callback)
+    }
+    
+    function first_start() {
+        delayed_start(5000);
+    }
+
+    function reset_timer() {
+        timer = 0;
+        timer_start = new Date();
+        timer_on = false;
+    }
+
+    function start_timer() {
+        timer_start = new Date();
+        timer_on = true;
+    }
+
+    function stop_timer() {
+        timer = check_timer();
+        timer_on = false;
+    }
+
+    function sec_to_str(t) {
+        var hour = Math.floor(t / (60 * 60 * 1000));
+        t = t % (60 * 60 * 1000);
+        var minute = Math.floor(t / (60 * 1000));
+        t = t % (60 * 1000);
+        var sec = Math.floor(t / 1000); 
+        t = t % (1000);
+        var msec = Math.floor(t); 
+        var pad = function(num, length) {
+            var length = length | 2;
+            numStr = num.toString();
+            while (numStr.length < length) {
+                numStr = '0' + numStr;
+            }
+            return numStr;
+        }
+        return pad(hour) + ':' + pad(minute) + ':' + pad(sec) + '.' + pad(msec, 3);
+    }
+
+    function check_timer() {
+        if (timer_on) {
+            var cur_time = new Date();
+            var time_diff = cur_time - timer_start;
+        } else {
+            var time_diff = 0;
+        }
+        return timer + time_diff;
+    }
+
+    function start_tracking_eeg() {
+        alarm_interval = setInterval(check_eeg_connection, 1000);
+    }
+
+    function stop_tracking_eeg() {
+        clearInterval(alarm_interval);
+    }
+
+    function delayed_stop(delay) {
+        delay_callback = stop;
+        var now = new Date();
+        delay_timer_end = new Date(now.getTime() + delay);
+        delay_message = 'Stopping in ';
+    }
+
+    function delayed_start(delay) {
+        delay_callback = resume;
+        var now = new Date();
+        delay_timer_end = new Date(now.getTime() + delay);
+        delay_message = 'Starting in ';
+    }
+
+    function resume() {
+        start_tracking_eeg();
+        start_timer();
+        $(".player_button").hide();
+        $(".stop_button").show();
+        startSession(function(resp) {
+                if (resp.ok) {
+                    current_session = resp.session_name;
+                } else {
+                    // TODO: display failed to start error 
+                }
+        });
+    }
+
+    function stop() {
+        stop_tracking_eeg();
+        stop_timer();
+        $(".player_button").hide();
+        $(".resume_button").show();
+        stopSession(); // check that closing the session didn't fail
+    }
+
+    function check_eeg_connection() {
+        $.get('/EEG/check_eeg_connection',
+                {'viewer_names': JSON.stringify(args.viewer_names)},
+                function(status) {
+                if (status != "OK") {
+                    console.log(status);
+                    var beep = new Audio("{% static "beep.wav" %}");
+                    //beep.play();
+                }});
+    }
+</script>
+
+{%endblock main%}

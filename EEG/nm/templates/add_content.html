@@ -1,0 +1,24 @@
+{% extends "nmbase.html" %}
+{%block link%}
+<script type="text/javascript" src="/my_admin/jsi18n/"></script>
+<script type="text/javascript" src="/media/admin/js/core.js"></script>
+{%endblock link%}
+{%block main%}
+    <div class="well">
+        <form class="form-horizontal" action="" method="post">
+            {% csrf_token %}
+            {% load tz %}
+            {{ form.non_field_errors }}
+            <p>
+                <label>Content Name:</label>
+                <div class="fieldWrapper">
+                    {{ form.name.errors }}
+                    {{ form.name}}
+                </div>
+            </p>
+            <p class="form-actions">
+                <input type="submit" value="Add Content" class="btn btn-primary">
+            </p>
+        </form>
+    </div>
+{%endblock main%}

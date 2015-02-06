@@ -1,0 +1,6 @@
+{% extends "nmbase.html" %}
+{% block main %}
+<a class="btn btn-primary" href="/EEG/market/setup_game/{{current_content_group.name}}?content={{current_content.name|urlencode}}">
+    Run Game
+</a>
+{% endblock %}

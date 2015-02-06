@@ -1,0 +1,26 @@
+{% extends "nmbase.html" %}
+{% block main %}
+<h2> {{current_content.name}} </h2>
+<div class="well">
+    <form class="form-horizontal" action="/EEG/market/game/{{current_content_group.name}}" method="get" target="_blank">
+        {% csrf_token %}
+        {% load tz %}
+        {{ form.non_field_errors }}
+        <p>
+            <label>Viewers</label>
+            separated by ;
+            <div class="fieldWrapper">
+                {{ form.viewers.errors }}
+                {{ form.viewers}}
+            </div>
+
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+        </p>
+        <p class="form-actions">
+            <input type="submit" value="Run Experiment" class="btn btn-primary">
+        </p>
+    </form>
+</div>
+{% endblock main %}

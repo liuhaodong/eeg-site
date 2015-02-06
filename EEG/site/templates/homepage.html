@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% load staticfiles %}
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>SynMetric - Bootstrap Theme</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<!-- stylesheets -->
+		<link rel="stylesheet" type="text/css" href="{% static "css/compiled/theme.css" %}">
+		<link rel="stylesheet" type="text/css" href="{% static "css/vendor/animate.css" %}">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+		<!-- javascript -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="{% static "js/bootstrap/bootstrap.min.js" %}"></script>
+		<script src="{% static "js/theme.js" %}"></script>
+
+		<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+	</head>
+	<body id="home4">
+		<header class="navbar navbar-inverse hero" role="banner">
+			<div class="container">
+				<div class="navbar-header">
+					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+
+					</button>
+
+					<a class="navbar-brand">SynMetric</a>
+				</div>
+
+				<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+					<ul class="nav navbar-nav navbar-right">
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"> Our Service <b class="caret"></b> </a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="features.html">Features</a>
+								</li>
+								<li>
+									<a href="services.html">Services</a>
+								</li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"> Technology <b class="caret"></b> </a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="pricing.html">Pricing charts</a>
+								</li>
+								<li>
+									<a href="charts.html">Comparison tables</a>
+								</li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"> Users <b class="caret"></b> </a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="{% url 'login' %}">Sign in </a>
+								</li>
+								<li>
+									<a href="{% url 'register' %}">Sign up</a>
+								</li>
+								<li>
+									<a href="gallery.html">Forget password</a>
+								</li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"> Blog <b class="caret"></b> </a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="blog.html">Blog</a>
+								</li>
+								<li>
+									<a href="blogpost.html">Blog Post</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</nav>
+			</div>
+		</header>
+
+		<div id="hero">
+			<a class="slide-nav prev" href="#">Prev</a>
+			<a class="slide-nav next" href="#">Next</a>
+			<nav>
+				<a class="active" href="#"></a>
+				<a href="#"></a>
+				<a href="#"></a>
+			</nav>
+			<div class="slides">
+				<div class="slide first active">
+					<div class="bg"></div>
+					<div class="container">
+						<h1 class="hero-text">Get the best brain signal technologies for studying.</h1>
+						<p class="sub-text">
+							Synmetric applies brain signal technologies proven in neuromarketing/neurocinema to
+							help instructors better engage their students.
+						</p>
+						<div class="video-wrapper">
+							<div class="video animated fadeInUp">
+								<img src="{% static "image/video.png" %}" id="demo-player" alt="videoplayer" />
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="slide second">
+					<div class="bg"></div>
+					<div class="container">
+						<div class="row">
+							<div class="col-sm-5 hidden-xs mobiles">
+								<img src="{% static "image/logo.png" %}" class="animated fadeInLeft img-responsive" alt="devices" />
+							</div>
+							<div class="col-sm-7 info">
+								<h1 class="hero-text"> With synmetrics, instructors receive real-time
+								information on the engagement and confusion level of their students without any conscious effort
+								from the student. </h1>
+								<div class="cta">
+									<div class="cta animated fadeInRight">
+										<a href="{% url 'login' %}" class="button-outline">Return the tour</a>
+										<a href="{% url 'register' %}" class="button">Sign up free</a>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="slide third">
+					<div class="bg"></div>
+					<div class="container">
+						<h1 class="hero-text animated fadeInLeft"> Software prototype </h1>
+						<p class="sub-text animated fadeInLeft">
+							A client/server infrastructure allowing us to deploy our system in the
+							form of a cloud-based Software as a Service with PC and Android clients
+						</p>
+						<div class="col-md-3"></div>
+						<div class="col-md-6">
+							<div class="cta animated fadeInRight">
+								<div class="cta animated fadeInRight">
+
+									<a href="{% url 'login' %}" class="button-outline">Return the tour</a>
+									<a href="{% url 'register' %}" class="button">Sign up free</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="video-modal">
+				<div class="wrap">
+					<iframe src="http://www.youtube.com/embed/ACjLuMvbAnM" width="620" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+				</div>
+			</div>
+
+		</div>
+
+		<div id="features">
+			<div class="container">
+				<div class="row header">
+					<div class="col-md-12">
+						<h2>Need an easy way to study?</h2>
+						<p>
+							SynMetric is perfect for teachers and students.
+						</p>
+					</div>
+				</div>
+				<div class="row feature">
+					<div class="col-md-6 info">
+						<h4>As a professor</h4>
+						<p>
+							Use the EEG graph to tell whether you need to slow down or move forward. Use the attention and confusion level to understand your student better. Very easy to use!
+						</p>
+					</div>
+					<div class="col-md-6 image">
+						<img src="{% static "image/professor.jpg" %}" class="img-responsive" alt="feature1" />
+					</div>
+				</div>
+				<div class="divider"></div>
+				<div class="row feature backwards">
+					<div class="col-md-6 info">
+						<h4>As a student</h4>
+						<p>
+							Use the EEG graph to handle your understanding, we also have the competition for all of the students! Never feel alone in the class and have a new experience of peer studying!
+						</p>
+					</div>
+					<div class="col-md-6 image">
+						<img src="{% static "image/student.jpg" %}" class="img-responsive" alt="feature2" />
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="pricing">
+			<div class = 'container'>
+				<div class="row header">
+					<div class="col-md-10">
+						<h2>Tuturial for Mobile Application </h2>
+					</div>
+				</div>
+				<div class = 'row'>
+					<div class='col-md-6'>
+						<a href="JavaScript:slideshowBackA()"><img src="{% static "image/arrow_2.png" %}"/ height="32", width="32"></a>
+						<img src="{% static "image/android_p_1.png" %}" name="mypic1" height="500" witdth="200"/>
+						<a href="JavaScript:slideshowUpA()"><img src="{% static "image/arrow_1.png" %}"/ height="32", width="32"></a>
+					</div>
+					<div class='col-md-6'>
+						<a href="JavaScript:slideshowBackI()"><img src="{% static "image/arrow_2.png" %}"/ height="32", width="32"></a>
+						<img src="{% static "image/ios_p_1.png" %}" name="mypic2"  height="500" witdth="200"/>
+						<a href="JavaScript:slideshowUpI()"><img src="{% static "image/arrow_1.png" %}"/ height="32", width="32"></a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="features-hover">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12 images">
+						<img src="{% static "image/web.png" %}" class="img-responsive active" alt="services1" />
+						<img src="{% static "image/andoid.png" %}" class="img-responsive" alt="services2" />
+						<img src="{% static "image/ios.png" %}" class="img-responsive" alt="services3" />
+					</div>
+				</div>
+				<div class="row features">
+					<div class="col-md-4">
+						<div class="feature active">
+							<strong>Your web client</strong>
+							<p>
+								You can have a dashboard for your study
+							</p>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="feature">
+							<strong>Your Android client</strong>
+							<p>
+								Easy to use and beautiful UI.
+							</p>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="feature">
+							<strong>Your IOS client</strong>
+							<p>
+								Easy to use and beautiful UI.
+
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="testimonials">
+			<div class="container">
+				<div class="row header">
+					<div class="col-md-12">
+						<h3>Meet with our team</h3>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="testimonial pull-right">
+							<!--  <div class="quote">-->
+
+							<div class="arrow-down">
+								<div class="arrow"></div>
+								<div class="arrow-border"></div>
+								<!--   </div>-->
+							</div>
+							<div class="author">
+								<img src="{% static "image/aaron.png" %}" class="pic" alt="testimonial1" />
+								<div class="name">
+									Arron Yuan
+								</div>
+								<div class="company">
+									Technology Lead
+								</div>
+							</div>
+							<div class="author">
+								<img src="{% static "image/hxb.png" %}" class="pic" alt="testimonial1" />
+								<div class="name">
+									Xiaobo Hu
+								</div>
+								<div class="company">
+									Android Team
+								</div>
+							</div>
+							<div class="author">
+								<img src="{% static "image/shangqing.png" %}" class="pic" alt="testimonial1" />
+								<div class="name">
+									Shangqin Zhang
+								</div>
+								<div class="company">
+									Android Team
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="testimonial pull-right">
+							<!--  <div class="quote">-->
+
+							<div class="arrow-down">
+								<div class="arrow"></div>
+								<div class="arrow-border"></div>
+								<!--   </div>-->
+							</div>
+							<div class="author">
+								<img src="{% static "image/haohan.png" %}" class="pic" alt="testimonial1" />
+								<div class="name">
+									Haohan Wang
+								</div>
+								<div class="company">
+									Business Lead
+								</div>
+							</div>
+							<div class="author">
+								<img src="{% static "image/mz.png" %}" class="pic" alt="testimonial1" />
+								<div class="name">
+									Zhu Meng
+								</div>
+								<div class="company">
+									Server and Web Team
+								</div>
+							</div>
+							<div class="author">
+								<img src="{% static "image/yyc.png" %}" class="pic" alt="testimonial1" />
+								<div class="name">
+									Yucong Yang
+								</div>
+								<div class="company">
+									Research Team
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="testimonial pull-right">
+							<!--  <div class="quote">-->
+
+							<div class="arrow-down">
+								<div class="arrow"></div>
+								<div class="arrow-border"></div>
+								<!--   </div>-->
+							</div>
+							<div class="author">
+								<img src="{% static "image/Kevin.png" %}" class="pic" alt="testimonial1" />
+								<div class="name">
+									Kai-min Kevin Chang
+								</div>
+								<div class="company">
+									Research Lead
+								</div>
+							</div>
+							<div class="author">
+								<img src="{% static "image/ywl.png" %}" class="pic" alt="testimonial1" />
+								<div class="name">
+									Yiwei Li
+								</div>
+								<div class="company">
+									PC Team
+								</div>
+							</div>
+							<div class="author">
+								<img src="{% static "image/wjz.png" %}" class="pic" alt="testimonial1" />
+								<div class="name">
+									Weijia Zhang
+								</div>
+								<div class="company">
+									IOS Team
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		</div>
+
+		<div id="footer">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-3 copyright">
+						SynMetric LLC 2014
+					</div>
+					<div class="col-sm-6 menu">
+						<ul>
+							<li>
+								<a href="features.html">Features</a>
+							</li>
+							<li>
+								<a href="services.html">Services</a>
+							</li>
+							<li>
+								<a href="pricing.html">Pricing</a>
+							</li>
+							<li>
+								<a href="support.html">Support</a>
+							</li>
+							<li>
+								<a href="blog.html">Blog</a>
+							</li>
+						</ul>
+					</div>
+					<div class="col-sm-3 social">
+						<a href="#"> <img src="{% static "image/twitter-icon.png" %}" alt="twitter" /> </a>
+						<a href="#"> <img src="{% static "image/facebook-logo.png" %}" alt="dribbble" /> </a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			$('.slides').carousel({
+				interval : 2000
+			})
+			$(function() {
+				var $navDots = $("#hero nav a")
+				var $next = $(".slide-nav.next");
+				var $prev = $(".slide-nav.prev");
+				var $slides = $("#hero .slides .slide");
+				var actualIndex = 0;
+				var swiping = false;
+				var interval;
+
+				$navDots.click(function(e) {
+					e.preventDefault();
+					if (swiping) {
+						return;
+					}
+					swiping = true;
+
+					actualIndex = $navDots.index(this);
+					updateSlides(actualIndex);
+				});
+
+				$next.click(function(e) {
+					e.preventDefault();
+					if (swiping) {
+						return;
+					}
+					swiping = true;
+
+					clearInterval(interval);
+					interval = null;
+
+					actualIndex++;
+					if (actualIndex >= $slides.length) {
+						actualIndex = 0;
+					}
+
+					updateSlides(actualIndex);
+				});
+
+				$prev.click(function(e) {
+					e.preventDefault();
+					if (swiping) {
+						return;
+					}
+					swiping = true;
+
+					clearInterval(interval);
+					interval = null;
+
+					actualIndex--;
+					if (actualIndex < 0) {
+						actualIndex = $slides.length - 1;
+					}
+
+					updateSlides(actualIndex);
+				});
+
+				function updateSlides(index) {
+					// update nav dots
+					$navDots.removeClass("active");
+					$navDots.eq(index).addClass("active");
+
+					// update slides
+					var $activeSlide = $("#hero .slide.active");
+					var $nextSlide = $slides.eq(index);
+
+					$activeSlide.fadeOut();
+					$nextSlide.addClass("next").fadeIn();
+
+					setTimeout(function() {
+						$slides.removeClass("next").removeClass("active");
+						$nextSlide.addClass("active");
+						$activeSlide.removeAttr('style');
+						swiping = false;
+					}, 1000);
+				}
+
+				interval = setInterval(function() {
+					if (swiping) {
+						return;
+					}
+					swiping = true;
+
+					actualIndex++;
+					if (actualIndex >= $slides.length) {
+						actualIndex = 0;
+					}
+
+					updateSlides(actualIndex);
+				}, 8000);
+
+				// demo player
+				var $videoModal = $(".video-modal");
+				$("#demo-player").click(function() {
+					$videoModal.toggleClass("active");
+					clearInterval(interval);
+					interval = null;
+				});
+				$videoModal.click(function() {
+					$videoModal.removeClass("active");
+					setTimeout(function() {
+						$videoModal.find(".wrap").html('<iframe src="http://www.youtube.com/embed/ACjLuMvbAnM" width="620" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>');
+					}, 1000);
+				})
+				$videoModal.find(".wrap").click(function(e) {
+					e.stopPropagation();
+				});
+			});
+
+			var numA = 1
+			imgA1 = new Image()
+			imgA1.src = "{% static "image/android_p_1.png" %}"
+			imgA2 = new Image()
+			imgA2.src = "{% static "image/android_p_2.png" %}"
+			imgA3 = new Image()
+			imgA3.src = "{% static "image/android_p_3.png" %}"
+			imgA4 = new Image()
+			imgA4.src = "{% static "image/android_p_4.png" %}"
+			imgA5 = new Image()
+			imgA5.src = "{% static "image/android_p_5.png" %}"
+
+			function slideshowUpA() {
+				numA = numA + 1
+				if (numA == 6) {
+					numA = 1
+				}
+				document.mypic1.src = eval("imgA" + numA + ".src")
+			}
+
+			function slideshowBackA() {
+				numA = numA - 1
+				if (numA == 0) {
+					numA = 5
+				}
+				document.mypic1.src = eval("imgA" + numA + ".src")
+			}
+
+			var numI = 1
+			imgI1 = new Image()
+			imgI1.src = "{% static "image/ios_p_1.png" %}"
+			imgI2 = new Image()
+			imgI2.src = "{% static "image/ios_p_2.png" %}"
+			imgI3 = new Image()
+			imgI3.src = "{% static "image/ios_p_3.png" %}"
+			imgI4 = new Image()
+			imgI4.src = "{% static "image/ios_p_4.png" %}"
+			imgI5 = new Image()
+			imgI5.src = "{% static "image/ios_p_5.png" %}"
+
+			function slideshowUpI() {
+				numI = numI + 1
+				if (numI == 6) {
+					numI = 1
+				}
+				document.mypic2.src = eval("imgI" + numI + ".src")
+			}
+
+			function slideshowBackI() {
+				numI = numI - 1
+				if (numI == 0) {
+					numI = 5
+				}
+				document.mypic2.src = eval("imgI" + numI + ".src")
+			}
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,23 @@
+<div class="container">
+<div class="row">
+<div class="col-md-8">
+<div id='{{graph_name}}' style="width:{{width}}px;height:{{height}}px">
+
+</div>
+</div>
+
+<form action="">
+
+<h4><input class="syn_checkbox" type="checkbox" name="my-checkbox"value="engagement"> Engagement<br><br>
+<input type="checkbox" name="my-checkbox"class="syn_checkbox" value="happy"> Happy <br><br>
+<input type="checkbox" name="my-checkbox" class="syn_checkbox" value="sad"> Sad<br><br>
+</form>
+</div></div>
+<script>
+$("[name='my-checkbox']").bootstrapSwitch();
+    createConfusionGraph('#{{graph_name}}',
+                        '{{content_group.name}}',
+                        '{{content.name}}',
+                        '{{content.duration}}');
+</script>
+</div>

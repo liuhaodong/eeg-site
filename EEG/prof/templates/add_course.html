@@ -1,0 +1,64 @@
+{% extends "profbase.html" %}
+{%block li%}
+<li class="dropdown">
+        				<a class="dropdown-toggle" data-toggle="dropdown">
+          					Add Course <b class="caret"></b>
+          				</a>
+          				<ul class="dropdown-menu">
+							{% for eachcourse in courseall%}
+<li ><a href="/EEG/course/{{eachcourse.name}}">{{eachcourse.name}}</a></li>
+
+{% endfor %} 
+
+				        </ul>
+				       
+        			</li>
+{%endblock li%}
+
+    {%block addcourse%}
+            <li class="active">
+                <div class="pointer">
+                    <div class="arrow"></div>
+                    <div class="arrow_border"></div>
+                </div>
+               <a href='/EEG/add_course'>
+                    <i class="fa fa-book fa-fw"></i>
+                    <span>Other Courses</span>
+                </a>
+            </li>
+    {%endblock addcourse%}
+    {%block curentlecture%}
+    {%endblock curentlecture%}
+    {%block pastlecture%}
+    {%endblock pastlecture%}
+    {%block addlecture%} 
+    {%endblock addlecture%} 
+    {%block addvideolecture%} 
+    {%endblock addvideolecture%} 
+{%block main%}
+    <div class="well">
+        <form class="form-horizontal" action="" method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <p>
+                <div class="fieldWrapper">
+                    {{ form.content_group_name.errors }}
+                    <label for="course_name">Name of Course:</label>
+                    {{ form.content_group_name }}
+                </div>
+            </p>
+            <p>
+                <label for="students">Student Emails:</label>
+                <br/>
+                separated by semicolon(;)
+                <div class="fieldWrapper">
+                    {{ form.students.errors }}
+                    {{ form.students }}
+                </div>
+            </p>
+            <p class="form-actions">
+                <input type="submit" value="Add Course" class="btn btn-primary">
+            </p>
+        </form>
+    </div>
+{%endblock main%}

@@ -1,0 +1,40 @@
+{% extends "nmbase.html" %}
+{%block link%}
+<script type="text/javascript" src="/my_admin/jsi18n/"></script>
+<script type="text/javascript" src="/media/admin/js/core.js"></script>
+{%endblock link%}
+{%block addvideo%}
+<li class="active">
+    <div class="pointer">
+        <div class="arrow"></div>
+        <div class="arrow_border"></div>
+    </div>
+    <a href='/EEG/add_video/{{current_content_group.name}}'>
+        Add Video
+    </a>
+</li>
+{%endblock addvideo%}
+{%block main%}
+    <div class="well">
+        <form class="form-horizontal" action="" method="post">
+            {% csrf_token %}
+            {% load tz %}
+            {{ form.non_field_errors }}
+            <p>
+                <label>Video Name:</label>
+                <div class="fieldWrapper">
+                    {{ form.name.errors }}
+                    {{ form.name}}
+                </div>
+                <label>Youtube URL:</label>
+                <div class="fieldWrapper">
+                    {{ form.url.errors }}
+                    {{ form.url }}
+                </div>
+            </p>
+            <p class="form-actions">
+                <input type="submit" value="Add Video" class="btn btn-primary">
+            </p>
+        </form>
+    </div>
+{%endblock main%}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>profbase</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load staticfiles %}
+
+    <!-- bootstrap -->
+    <link href="{% static "css/bootstrap/bootstrap.css" %}" rel="stylesheet" />
+    <link href="{% static "css/bootstrap/bootstrap-overrides.css" %}" type="text/css" rel="stylesheet" />
+
+    <!-- libraries -->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+    <link href="{% static "css/lib/jquery-ui-1.10.2.custom.css" %}" rel="stylesheet" type="text/css" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <!-- script -->
+    <script src="{% static "Highcharts/js/highcharts.js" %}" type="text/javascript"></script>
+
+    <!-- open sans font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css' />
+
+    <!-- lato font -->
+    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css' />
+    
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="{% static "css/compiled/layout.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "css/compiled/elements.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "css/compiled/icons.css" %}"/>
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="{% static "css/compiled/index.css" %}" type="text/css" media="screen" />
+    
+    <!-- Custom styles for this template -->
+    <link href="{% static "other/homestream.css" %}" rel="stylesheet">
+
+    {% block extrascripts %}
+    {% endblock %}
+    
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <!-- navbar -->
+    <header class="navbar navbar-inverse" role="banner">
+        <div class="navbar-header">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" id="menu-toggler">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+                <img src="{% static "image/logo(1).png" %}" width="40" />SynMetric
+            </a>
+        </div>
+      
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                {% block li %}
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown">
+                        {{current_content_group.name}} <b class="caret"></b>
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        {% for content_group in content_groupall%}
+                            {% if content_group != current_content_group %}
+                                <li ><a href="/EEG/market/cg/{{content_group.name}}">{{content_group.name}}</a></li>
+                            {% endif %}
+                        {% endfor %} 
+                        <li><a href='/EEG/add_campaign'>Add Campaign</a></li>
+				    </ul>
+				       
+                </li>
+                {% endblock li %}
+
+                <li>
+                    <a href="/EEG/logout?next=/EEG/login">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <!-- end navbar -->
+
+    <!-- sidebar -->
+    {% block sidebar %}
+    <div id="sidebar-nav">
+        <ul id="dashboard-menu">
+
+            <li>
+                <a href='#' id='series-button'>
+                    <i class="fa fa-list fa-fw"></i>
+                    <span>Series</span>
+                    <i class="icon-chevron-down"></i>
+                </a>
+            </li>
+
+            <li id='series-submenu'>
+                <ul id="submenu">
+                    {% block addseries %}
+                    <li>
+                        <a href='/EEG/add_series/{{current_content_group.name}}'>
+                            Add Series
+                        </a>
+                    </li>
+                    {% endblock addseries %}
+
+                    {% block series %}
+                    {% for series in seriesall%}
+                        {% if series == current_series %}
+                        <li class="active">
+                        {% else %}
+                        <li>
+                        {% endif %}
+                            <a href="/EEG/market/cg/{{current_content_group.name}}?series={{series.name|urlencode}}">
+                                {{series.name}}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    {% endblock series %}
+                </ul>
+            </li>
+
+            <li>
+                <a href='#' id='video-button'>
+                    <i class="fa fa-video-camera fa-fw"></i>
+                    <span>Videos</span>
+                    <i class="icon-chevron-down"></i>
+                </a>
+            </li>
+
+            <li id='video-submenu'>
+                <ul id="submenu">
+                    {% block addvideo %}
+                    <li>
+                        <a href='/EEG/add_video/{{current_content_group.name}}'>
+                            Add Video
+                        </a>
+                    </li>
+                    {% endblock addvideo %}
+
+                    {% block video %}
+                    {% for content in videoall%}
+                        {% if content == current_content %}
+                        <li class="active">
+                        {% else %}
+                        <li>
+                        {% endif %}
+                            <a href="/EEG/market/cg/{{current_content_group.name}}?content={{content.name|urlencode}}">
+                                {{content.name}}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    {% endblock video %}
+                </ul>
+            </li>
+
+            <li>
+                <a href='#' id='content-button'>
+                    <i class="fa fa-link fa-fw"></i>
+                    <span>Content</span>
+                    <i class="icon-chevron-down"></i>
+                </a>
+            </li>
+
+            <li id='content-submenu'>
+                <ul id="submenu">
+                    {% block addcontent %}
+                    <li>
+                        <a href='/EEG/add_content/{{current_content_group.name}}'>
+                            Add Content
+                        </a>
+                    </li>
+                    {% endblock addcontent %}
+
+                    {% block content %}
+                    {% for content in contentall%}
+                        {% if content == current_content %}
+                        <li class="active">
+                        {% else %}
+                        <li>
+                        {% endif %}
+                            <a href="/EEG/market/cg/{{current_content_group.name}}?content={{content.name|urlencode}}">
+                                {{content.name}}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    {% endblock content %}
+                </ul>
+            </li>
+    </div>
+    {% endblock sidebar %}
+    <!-- end sidebar -->
+
+	<!-- main container -->
+    <div class="content">
+        <div id="pad-wrapper">
+            <div class="row chart">
+                <div class="col-md-12">
+                {% block main %}
+                {% endblock main %}
+                </div>
+            </div>
+        </div>
+    </div>
+	<!-- end main container -->
+
+</body>
+
+<script>
+
+$('#video-submenu').hide();
+$('#video-button').click(function() {
+        var submenu = $('#video-submenu');
+        submenu.is(':visible') ? submenu.hide() : submenu.show();
+});
+$('#content-submenu').hide();
+$('#content-button').click(function() {
+        var submenu = $('#content-submenu');
+        submenu.is(':visible') ? submenu.hide() : submenu.show();
+});
+$('#series-submenu').hide();
+$('#series-button').click(function() {
+        var submenu = $('#series-submenu');
+        submenu.is(':visible') ? submenu.hide() : submenu.show();
+});
+
+</script>
+
+</html>

@@ -1,0 +1,34 @@
+{% extends "profbase.html" %}
+
+{% block extrascripts %}
+<link href="/static/css/bootstrap-switch.css" rel="stylesheet">
+<script src="/static/js/jquery.flot.js"></script>
+<script src="/static/js/jquery.flot.stack.js"></script>
+<script src="/static/js/jquery.flot.resize.js"></script>
+<script src="/static/js/theme.js"></script>
+<script src="/static/js/syn_plotter.js"></script>
+<script src="/static/js/bootstrap-switch.js"></script>
+{% endblock %}
+
+{%block curentlecture%}
+<li class="active">
+    <div class="pointer">
+        <div class="arrow"></div>
+        <div class="arrow_border"></div>
+    </div>
+    <a href='/EEG/profhome'>
+        <i class="fa fa-home fa-fw"></i>
+        <span>Newest Lecture</span>
+    </a>
+</li>
+{%endblock curentlecture%}
+{%block addcourse%} 
+{%endblock addcourse%} 
+
+{%block main%}
+{% if current_lecture != None %}
+<h2> {{current_lecture.name}} </h2>
+{% include "confusion_graph.html" with graph_name="content_confusion_graph" content_group=current_course content=current_lecture width=600 height=300 only %}
+{% endif %}
+
+{%endblock main%}

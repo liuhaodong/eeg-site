@@ -1,0 +1,379 @@
+{% extends "experimentbase.html" %}
+
+{% block main %}
+{% load staticfiles %}
+
+<style>
+    .survey {font-size:12pt;}
+    .likert li {
+        display: inline;
+        list-style-type: none;
+    }
+</style>
+
+<div id="series_container">
+    {% for segment in videos %}
+        {% if segment.survey %}
+            <form class="survey" id="survey_{{segment.survey.id}}">
+                {% for question in segment.survey.questions %}
+                    <div class="survey_question">
+                        {{question.text}}
+                    </div>
+                    <div class='answer_area'>
+                        {% if question.type == 'likert'%}
+                        <ul class="likert">
+                            <li>
+                            </li>
+                            {% for i in "1234567" %}
+                                <li>
+                                    <input type="radio" name="{{question.name}}" value={{i}}>
+                                </li>
+                            {% endfor %}
+                            <li>
+                            </li>
+                        </ul>
+                        {% else %}
+                            <input type="text" name="{{question.name}}" value={{i}}>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <input class='next_button' type="button" value="Next" onclick="submit_survey(this.form)">
+            </form>
+        {% elif segment.notice %}
+            <div class="notice" id="notice_{{segment.notice.id}}">
+                <h1>{{segment.notice.text}}</h1>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <div class="player">
+        <div class="player_controls">
+            <a class="play_button player_button" href="javascript:void(0);" onclick="first_start();">Play</a>
+            <a class="stop_button player_button" href="javascript:void(0);" onclick="stop();">Stop</a>
+            <a class="resume_button player_button" href="javascript:void(0);" onclick="resume();">Resume</a>
+        </div>
+        <div id="current_content"> 
+            <div class="html5_content player_content">
+                <video controls id="html5_player" width="600" height="300">
+                    <source src="#" type="video/mp4">
+                </video>
+            </div>
+            <div class="unity_content player_content">
+                <div id="unity_player">
+                    <!--
+                    <div class="missing">
+                        <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
+                            <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
+                        </a>
+                    </div>
+                    <div class="broken">
+                        <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now! Restart your browser after install.">
+                            <img alt="Unity Web Player. Install now! Restart your browser after install." src="http://webplayer.unity3d.com/installation/getunityrestart.png" width="193" height="63" />
+                        </a>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+        <div id="message"><h1> The Experiment is Over </h1></div>
+    </div>
+</div>
+<script type='text/javascript' src='https://ssl-webplayer.unity3d.com/download_webplayer-3.x/3.0/uo/jquery.min.js'></script>
+<script type="text/javascript">
+<!--
+var unityObjectUrl = "http://webplayer.unity3d.com/download_webplayer-3.x/3.0/uo/UnityObject2.js";
+if (document.location.protocol == 'https:')
+    unityObjectUrl = unityObjectUrl.replace("http://", "https://ssl-");
+document.write('<script type="text\/javascript" src="' + unityObjectUrl + '"><\/script>');
+-->
+</script>
+
+<script type="text/javascript">
+    $('.survey').hide();
+    $('.notice').hide();
+    player = null;
+    
+    $(function() {
+        vid_index = 0;
+        
+        args = {
+            content_group_name: '{{content_group_name}}',
+            viewer_names: [],
+            videos: []};
+
+        {% for viewer in viewers %}
+            args.viewer_names.push("{{viewer}}")
+        {% endfor %}
+
+        {% for segment in videos %}
+            var obj = {};
+            {% if segment.video %}
+                obj = {video: {
+                        name: "{{segment.video.name}}",
+                        url: "{{segment.video.video_url}}"}};
+            {% elif segment.game %}
+                obj = {game: {
+                    name: "{{segment.game}}"}};
+            {% elif segment.notice %}
+                obj = {notice: {
+                        id: "{{segment.notice.id}}",
+                        time: {{segment.notice.time}}}};
+            {% else %}
+                obj = {survey: {id: "{{segment.survey.id}}"}}
+            {% endif %}
+            args.videos.push(obj);
+        {% endfor %}
+
+        $("#message").hide();
+        $(".player_button").hide();
+        $(".play_button").show();
+        $(".player_content").hide();
+    });
+
+    function setPlayer(player_type) {
+        if (player) {
+            player.unload();
+        }
+        $('.player_content').hide();
+        if (player_type == 'video') {
+            $("#html5_player")[0].width = $(document).width() - 100;
+            $("#html5_player")[0].height = $(document).height() - 20;
+            player = new HTMLPlayer($("#html5_player")[0]);
+            $('.html5_content').show();
+        } else if (player_type == 'game') {
+            player = new UnityPlayer($("#unity_player")[0]);
+            $('.unity_content').show();
+        }
+    }
+
+    function startSession(callback) {
+        var time = player.getCurrentTime();
+        $.post('/EEG/API/start_session',
+                {'content_group_name': args.content_group_name,
+                'content_name': player.content_name,
+                'csrfmiddlewaretoken': "{{csrf_token}}",
+                'content_time': time,
+                'viewer_name': JSON.stringify(args.viewer_names)}, // TODO: send auth token
+                callback)
+    }
+    
+    function stopSession(callback) {
+        var time = player.getCurrentTime();
+        $.post('/EEG/API/stop_session',
+                {'content_group_name': args.content_group_name,
+                'content_name': player.content_name,
+                'session_name': player.session,
+                'csrfmiddlewaretoken': "{{csrf_token}}",
+                'content_time': time,
+                'viewer_name': JSON.stringify(args.viewer_names)}, // TODO: send auth token
+                callback)
+    }
+    
+    function play() {
+        check_eeg_connection();
+        
+        player.load(current_content, function() {
+                resume()
+        });
+    }
+
+    function stop() {
+        $(".player_button").hide();
+        $(".resume_button").show();
+        player.pause();
+        stopSession(); // check that closing the session didn't fail
+    }
+    
+    function resume() {
+        $(".player_button").hide();
+        if (player.stoppable) {
+            $(".stop_button").show();
+        }
+        startSession(function(resp) {
+                if (resp.ok) {
+                    player.play();
+                    player.session = resp.session_name;
+                } else {
+                    // TODO: display failed to start error 
+                }
+        });
+    }
+
+    function first_start() {
+        next();
+    }
+
+    function next() {
+        if (vid_index >= args.videos.length) {
+            // video over
+            $('#youtube_player').hide();
+            $('#message').show();
+        }
+        var segment = args.videos[vid_index];
+        if (segment.hasOwnProperty('video')) {
+            current_content = segment.video;
+            setPlayer('video');
+            play();
+        } else if (segment.hasOwnProperty('game')) {
+            current_content = segment.game;
+            setPlayer('game');
+            play();
+        } else if (segment.hasOwnProperty('notice')) {
+            show_notice(segment.notice);
+        } else {
+            show_survey(segment.survey);
+        }
+        vid_index += 1;
+    }
+
+    function show_notice(notice) {
+        $('.notice').hide();
+        $(".player").css({visibility: 'hidden'});
+        $("#notice_" + notice.id).show();
+        var t = this;
+        setTimeout(function() {
+                $('.notice').hide();
+                $(".player").css({visibility: 'visible'});
+                next.call(t);
+            }, notice.time);
+    }
+
+    function show_survey(survey) {
+        $('.survey').hide();
+        $(".player").css({visibility: 'hidden'});
+        $("#survey_" + survey.id).show();
+        $(".next_button").hide();
+        $('.survey').click(function() {
+                $(".next_button").show();
+            });
+    }
+    
+    function onPlayerStateChange(event) {        
+        // if video is over
+        if(event == 0) {  
+            stop();
+            next();
+        } 
+    }
+
+    function submit_survey(form) {
+        var outs = [];
+        $(form).find(':input').each(function(i, inp) {
+            if (inp.type == 'button') {
+                return;
+            }
+            if (inp.type != 'radio' || inp.checked) {
+                outs.push({'name': inp.name, 'val': inp.value});
+            }
+        });
+        $('.survey').hide();
+        $('.notice').hide();
+        $(".player").css({visibility: 'visible'});
+        var t = this;
+        $.post('/EEG/API/store_answers',
+                {'content_group_name': args.content_group_name,
+                'content_name': player.content_name,
+                'session_name': player.session,
+                'answers': JSON.stringify(outs),
+                'csrfmiddlewaretoken': "{{csrf_token}}",
+                'viewer_name': JSON.stringify(args.viewer_names)}, // TODO: send auth token
+                function() {next.call(t)})
+    }
+
+    function submit_log(data) {
+        $.post('/EEG/API/store_session_tag',
+                {'content_group_name': args.content_group_name,
+                'content_name': player.content_name,
+                'session_name': player.session,
+                'data': JSON.stringify(data),
+                'csrfmiddlewaretoken': "{{csrf_token}}",
+                'viewer_name': JSON.stringify(args.viewer_names)}, // TODO: send auth token
+                function() {})
+    }
+
+    function check_eeg_connection() {
+        $.get('/EEG/check_eeg_connection',
+                {'viewer_names': JSON.stringify(args.viewer_names)},
+                function(status) {
+                if (status != "OK") {
+                    alert('EEG not connected');
+                }});
+    }
+
+    function HTMLPlayer(htmlplayer) {
+        this.stoppable = true;
+        this.player = htmlplayer;
+        htmlplayer.addEventListener("ended", this.next);
+    }
+
+    HTMLPlayer.prototype.next = function() {
+        stop();
+        next();
+    }
+
+    HTMLPlayer.prototype.getCurrentTime = function() {
+        return this.player.currentTime;
+    }
+
+    HTMLPlayer.prototype.load = function(content, callback) {
+        this.content_name = content.name;
+        this.player.src = "https://s3.amazonaws.com/eeg-site-video/" + content.name + ".mp4"
+        this.player.onloadeddata = callback;
+        this.player.load();
+        this.player.pause();
+    }
+
+    HTMLPlayer.prototype.play = function() {
+        this.player.play();
+    }
+
+    HTMLPlayer.prototype.pause = function() {
+        this.player.pause();
+    }
+
+    HTMLPlayer.prototype.unload = function() {
+        this.player.removeEventListener("ended", this.next);
+    }
+
+    function UnityPlayer(unityplayer) {
+        this.stoppable = false;
+        var config = {
+            width: 1366, 
+            height: 768,
+            params: { enableDebugging:"0" }
+        };
+        var u = new UnityObject2(config);
+        u.initPlugin(unityplayer, "{% static "webpong.unity3d" %}");
+        console.log('loaded');
+    }
+
+    UnityPlayer.prototype.getCurrentTime = function() {
+        return 0;
+    }
+
+    UnityPlayer.prototype.load = function(content, callback) {
+        this.content_name = 'pong';
+        callback();
+    }
+
+    UnityPlayer.prototype.play = function() {
+    }
+
+    UnityPlayer.prototype.pause = function() {
+        alert("can't pause game!");
+    }
+
+    UnityPlayer.prototype.unload = function() {
+        //pass
+    }
+
+    function UnityLog(msg) {
+        submit_log(msg);
+    }
+
+    function UnityQuit(msg) {
+        stop();
+        finish();
+    }
+</script>
+
+{% endblock main %}

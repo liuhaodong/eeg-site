@@ -1,0 +1,10 @@
+machine	subject	start_time	end_time	stim	block	sigqual	rawwave
+software_management	bob	2014-02-28 01:01:10	2014-02-28 01:01:20	stim	block	0	1 2 3 4 5
+software_management	bob	2014-02-28 01:01:00	2014-02-28 01:01:10	stim	block	0	1 2 3 4 5
+software_management	bob	2014-02-28 01:00:50	2014-02-28 01:01:00	stim	block	0	1 2 3 4 5
+software_management	alice	2014-02-28 01:01:10	2014-02-28 01:01:20	stim	block	0	1 2 3 4 5
+software_management	alice	2014-02-28 01:01:00	2014-02-28 01:01:10	stim	block	0	1 2 3 4 5
+software_management	alice	2014-02-28 01:00:50	2014-02-28 01:01:00	stim	block	0	1 2 3 4 5
+software_management	bonobo	2014-02-28 01:01:10	2014-02-28 01:01:20	stim	block	0	1 2 3 4 5
+software_management	bonobo	2014-02-28 01:01:00	2014-02-28 01:01:10	stim	block	0	1 2 3 4 5
+software_management	bonobo	2014-02-28 01:00:50	2014-02-28 01:01:00	stim	block	0	1 2 3 4 5

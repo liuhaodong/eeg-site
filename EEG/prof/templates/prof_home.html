@@ -1,0 +1,38 @@
+{% extends "profbase.html" %}
+{%block home%}
+            <li class="active">
+                <div class="pointer">
+                    <div class="arrow"></div>
+                    <div class="arrow_border"></div>
+                </div>
+                <a href='/EEG/profhome'>
+                    <i class="fa fa-home fa-fw"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            {%endblock home%}
+    {%block curentlecture%}
+    {%endblock curentlecture%}
+    {%block pastlecture%}
+    {%endblock pastlecture%}
+    {%block addlecture%} 
+    {%endblock addlecture%} 
+{%block main%}
+
+ <div id="main-stats">
+  <div class="row stats-row">
+  <div class="col-md-6 col-sm-6 stat">
+  <div class="data"><span class="number">Course Name</span></div></div></div>
+           {% for eachcourse in courseall%}
+           <div class="col-md-3 col-sm-3 stat">
+                    <div class="data">
+                        <span class="number"><a href="/EEG/course/{{eachcourse.course}}">{{eachcourse.course}}</a></span>
+                        {{eachcourse.user}}
+                    </div>
+                    
+                </div>
+
+
+{% endfor %}
+</div>
+{%endblock main%}

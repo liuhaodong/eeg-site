@@ -1,0 +1,170 @@
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>HTML5 - Video Playlist - jsFiddle demo by Barzi</title>
+  
+  <script type='text/javascript' src='http://code.jquery.com/jquery-1.8.3.js'></script>
+  <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+  
+  
+  <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+  
+  <style type='text/css'>
+    #playlist {
+    display:table;
+}
+#playlist li{
+    cursor:pointer;
+    padding:8px;
+}
+
+#playlist li:hover{
+    color:blue;                        
+}
+#videoarea {
+    float:left;
+    width:00px;
+    height:00px;
+    margin:0px;    
+    border:1px solid silver;
+    left:40%;
+}
+</style>
+
+</head>
+
+{% extends "studentbase.html" %}
+
+{%block main%}
+{% if current_lecture != None %}
+<h2> {{current_lecture.name1}} </h2>
+<div id="current_content"></div>
+<div class="player_controls">
+    <a class="play_button player_button" href="javascript:void(0);" onclick="play();">Play</a>
+    <a class="stop_button player_button" href="javascript:void(0);" onclick="stop();">Stop</a>
+    <a class="resume_button player_button" href="javascript:void(0);" onclick="resume();">Resume</a>
+</div>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" type="text/javascript"></script>
+<script type="text/javascript">
+    
+    var index = 0;
+    var isInRest = 1;
+    var restVedioURL = "https://www.youtube.com/watch?v=TOsGAxFcYls";
+    
+    function onYouTubePlayerReady(playerId) {
+        ytplayer = document.getElementById("youtube_player");
+        $(".player_controls").show();
+        ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
+        console.log('added event');
+    }
+    $(".player_controls").hide();
+    $(".player_button").hide();
+    $(".play_button").show();
+    var params = { allowScriptAccess: "always" };
+    var atts = {id: "youtube_player"};
+    
+    
+    swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&version=3", 
+                        "current_content", "425", "356", "8", null, null, params, atts);
+
+    function startSession(callback) {
+        ytplayer.getCurrentTime();
+        $.post('/EEG/API/start_session',
+                {'content_group_name': "{{current_course.name}}",
+                 'content_name': "{{current_lecture.name}}",
+                 'csrfmiddlewaretoken': "{{csrf_token}}",
+                 'content_time': ytplayer.getCurrentTime(),
+                 'viewer_name': "{{viewer_name}}"}, // TODO: send auth token
+                callback)
+    }
+    
+    function stopSession(callback) {
+        ytplayer.getCurrentTime();
+        $.post('/EEG/API/stop_session',
+                {'content_group_name': "{{current_course.name}}",
+                 'content_name': "{{current_lecture.name}}",
+                 'session_name': current_session,
+                 'csrfmiddlewaretoken': "{{csrf_token}}",
+                 'content_time': ytplayer.getCurrentTime(),
+                 'viewer_name': "{{viewer_name}}"}, // TODO: send auth token
+                callback)
+    }
+    
+    function play() {
+      	var videoUrl = $("#playlist li").eq(index).attr("movieurl");
+        var videoId = videoUrl.slice(videoUrl.length - 11);
+        hl=document.getElementById(index+"");
+        hl.style.fontWeight='bold';
+        if(index!=0)
+			{hl=document.getElementById((index-1)+"");
+			        hl.style.fontWeight='normal';
+			}
+        
+        ytplayer.loadVideoById(videoId, 0, "large");
+        ytplayer.pauseVideo();
+        resume();
+    }
+    
+    function resume() {
+        $(".player_button").hide();
+        $(".stop_button").show();
+        startSession(function(resp) {
+                if (resp.ok) {
+                    ytplayer.playVideo();
+                    current_session = resp.session_name;
+                } else {
+                    // TODO: display failed to start error 
+                }
+        });
+    }
+    function stop() {
+        $(".player_button").hide();
+        $(".resume_button").show();
+        ytplayer.pauseVideo();
+        stopSession(); // check that closing the session didn't fail
+    }
+    
+    function onPlayerStateChange(event) {        
+        console.log('in player state change');
+//  code=event.data;
+	console.log(event);
+  
+        if(event == 0 && isInRest == 0) {  
+        	index = index + 1;
+            play();
+            isInRest = 1;
+        } else if (event == 0 && isInRest == 1) {
+        	rest();
+        	isInRest = 0;
+        } else {
+        	// do nothing
+        } 
+    }
+	function rest () {
+		console.log('in rest');
+		var videoUrl = restVedioURL;
+        var videoId = videoUrl.slice(videoUrl.length - 11);
+        
+        ytplayer.loadVideoById(videoId, 0, "large");
+        ytplayer.pauseVideo();
+        resume();
+	}
+
+</script>
+
+<body>
+  <video id="videoarea" controls="controls" poster="" src=""></video>
+<invisible>
+<ul id="playlist" >
+
+    <li id="0" movieurl="https://www.youtube.com/watch?v=I6yNcW2gmhc">Happy</li>
+    <li id="1" movieurl="https://www.youtube.com/watch?v=t_9iKAvSybQ">Sad</li>
+</ul>
+</invisible>
+
+</body>
+{% endif %}
+{%endblock main%}
+
+

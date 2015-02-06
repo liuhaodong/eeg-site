@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>studentbase</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <!-- bootstrap -->
+    <link href="/static/css/bootstrap/bootstrap.css" rel="stylesheet" />
+    <link href="/static/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet" />
+
+    <!-- libraries -->
+    <link href="/static/css/lib/jquery-ui-1.10.2.custom.css" rel="stylesheet" type="text/css" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="/static/css/compiled/layout.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/compiled/elements.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/compiled/icons.css" />
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="/static/css/compiled/index.css" type="text/css" media="screen" />
+    <!-- script -->
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+    <script src="/static/Highcharts/js/highcharts.js" type="text/javascript"></script>
+    <!-- open sans font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css' />
+
+    <!-- lato font -->
+    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css' />
+    
+    
+    <!-- Custom styles for this template -->
+    <link href="/static/other/homestream.css" rel="stylesheet">
+    
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <!-- navbar -->
+    <header class="navbar navbar-inverse" role="banner">
+        <div class="navbar-header">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" id="menu-toggler">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" >
+                <img src="/static/image/logo(1).png" width="40"  />SynMetric
+            </a>
+        </div>
+      
+            <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+            {%block li%}
+<li class="dropdown">
+        				<a class="dropdown-toggle" data-toggle="dropdown">
+          					{{current_course.name}} <b class="caret"></b>
+          				</a>
+          				<ul class="dropdown-menu">
+							{% for eachcourse in courseall%}
+                            {% if eachcourse != current_course %}
+<li ><a href="/EEG/student/course/{{eachcourse.name}}">{{eachcourse.name}}</a></li>
+                            {% endif %}
+
+{% endfor %} 
+				        </ul>
+				       
+        			</li>
+  {%endblock li%}     
+              
+ <li>             
+<a href="/EEG/logout?next=/EEG/login">Logout</a>
+</li>
+                
+                  </ul>
+                </li>
+              </ul>
+            </div>
+           
+        
+    </header>
+    <!-- end navbar -->
+
+    <!-- sidebar -->
+    {%block sidebar%}
+    <div id="sidebar-nav">
+        <ul id="dashboard-menu">
+            {% for lecture in lectureall%}
+                {% if lecture == current_lecture %}
+                <li class="active">
+                {% else %}
+                <li>
+                {% endif %}
+                    <a href="/EEG/student/course/{{current_course.name}}?lecture={{lecture.name|urlencode}}">
+                        <i class="fa fa-video-camera fa-fw"></i>
+                        <span>{{lecture.name}}</span>
+                    </a>
+                </li>
+            {% endfor %}
+    </div>
+    <!-- end sidebar -->
+    {%endblock sidebar%}
+
+	<!-- main container -->
+    <div class="content">
+        <div id="pad-wrapper">
+
+            <!-- statistics chart built with jQuery Flot -->
+            <div class="row chart">
+                <div class="col-md-12">
+                
+                {%block main%}
+                {%endblock main%}
+                </div>
+            </div>
+            <!-- end statistics chart -->
+	<!-- scripts -->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/jquery-ui-1.10.2.custom.min.js"></script>
+
+    {% block extra %}
+    {% endblock %}
+</body>
+</html>

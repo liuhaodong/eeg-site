@@ -1,0 +1,24 @@
+{% extends "nmbase.html" %}
+
+{%block addvideo%} 
+{%endblock addvideo%} 
+{%block addseries%} 
+{%endblock addseries%} 
+{%block main%}
+    <div class="well">
+        <form class="form-horizontal" action="" method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <p>
+                <div class="fieldWrapper">
+                    {{ form.content_group_name.errors }}
+                    <label for="campaign_name">Name of Campaign:</label>
+                    {{ form.content_group_name }}
+                </div>
+            </p>
+            <p class="form-actions">
+                <input type="submit" value="Add Campaign" class="btn btn-primary">
+            </p>
+        </form>
+    </div>
+{%endblock main%}

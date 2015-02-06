@@ -1,0 +1,49 @@
+{% extends "profbase.html" %}
+{%block link%}
+<script type="text/javascript" src="/my_admin/jsi18n/"></script>
+<script type="text/javascript" src="/media/admin/js/core.js"></script>
+{%endblock link%}
+{%block addlecture%}
+<li class="active">
+    <div class="pointer">
+        <div class="arrow"></div>
+        <div class="arrow_border"></div>
+    </div>
+    <a href='/EEG/add_lecture/{{current_course}}'>
+        <i class="fa fa-group fa-fw"></i>
+        <span>Add Lecture</span>
+        <i class="icon-chevron-down"></i>
+    </a>
+</li>
+{%endblock addlecture%}
+{%block main%}
+    <div class="well">
+        <form class="form-horizontal" action="" method="post">
+            {% csrf_token %}
+            {% load tz %}
+            {{ form.non_field_errors }}
+            <p>
+                <label>Lecture Name:</label>
+                <div class="fieldWrapper">
+                    {{ form.name.errors }}
+                    {{ form.name}}
+                </div>
+                <label>Start Date:</label>
+                e.g. 2014-03-06 09:00:00
+                <div class="fieldWrapper">
+                    {{ form.start_date.errors }}
+                    {{ form.start_date}}
+                </div>
+                <label>End Date:</label>
+                e.g. 2014-03-06 10:20:00
+                <div class="fieldWrapper">
+                    {{ form.end_date.errors }}
+                    {{ form.end_date}}
+                </div>
+            </p>
+            <p class="form-actions">
+                <input type="submit" value="Add Lecture" class="btn btn-primary">
+            </p>
+        </form>
+    </div>
+{%endblock main%}

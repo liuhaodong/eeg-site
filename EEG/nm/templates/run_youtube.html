@@ -1,0 +1,325 @@
+{% extends "experimentbase.html" %}
+
+{%block main%}
+{% load staticfiles %}
+
+<style>
+    .survey {font-size:12pt;}
+    .likert li {
+        display: inline;
+        list-style-type: none;
+    }
+</style>
+
+<div id="series_container">
+    {% for sensor in sensors %}
+        <div class='sensor' id='sensor_{{sensor.port}}'>
+            {{sensor.sensor}}_{{sensor.port}}
+        </div>
+    {% endfor %}
+    {% for segment in videos %}
+        {% if segment.survey %}
+            <form class="survey" id="survey_{{segment.survey.id}}">
+                {% for question in segment.survey.questions %}
+                    <div class="survey_question">
+                        {{question.text}}
+                    </div>
+                    <div class='answer_area'>
+                        {% if question.type == 'likert'%}
+                        <ul class="likert">
+                            <li>
+                            </li>
+                            {% for i in "1234567" %}
+                                <li>
+                                    <input type="radio" name="{{question.name}}" value={{i}}>
+                                </li>
+                            {% endfor %}
+                            <li>
+                            </li>
+                        </ul>
+                        {% else %}
+                            <input type="text" name="{{question.name}}" value={{i}}>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <input class='next_button' type="button" value="Next" onclick="submit_survey(this.form)">
+            </form>
+        {% elif segment.notice %}
+            <div class="notice" id="notice_{{segment.notice.id}}">
+                <h1>{{segment.notice.text}}</h1>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <div class="player">
+        <div class="player_controls">
+            <a class="play_button player_button" href="javascript:void(0);" onclick="first_start();">Play</a>
+            <a class="stop_button player_button" href="javascript:void(0);" onclick="stop();">Stop</a>
+            <a class="resume_button player_button" href="javascript:void(0);" onclick="resume();">Resume</a>
+        </div>
+        <div id="current_content"> 
+            <div id="youtube_content player_content"></div>
+            <div id="html5_content player_content">
+                <video controls id="html5_player" width="600" height="300">
+                    <source src="#" type="video/mp4">
+                </video>
+            </div>
+        </div>
+        <div id="message"><h1> The Experiment is Over </h1></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('.survey').hide();
+    $('.notice').hide();
+    function onYouTubePlayerReady(playerId) {
+        player = new YTPlayer(document.getElementById("youtube_player"));
+    }
+    
+    $(function() {
+        vid_index = 0;
+        
+        args = {
+            content_group_name: '{{content_group_name}}',
+            viewer_names: [],
+            videos: []};
+
+        {% for viewer in viewers %}
+            args.viewer_names.push("{{viewer}}")
+        {% endfor %}
+        {% for segment in videos %}
+            var obj = {};
+            {% if segment.video %}
+                obj = {video: {
+                        name: "{{segment.video.name}}",
+                        url: "{{segment.video.video_url}}"}};
+            {% elif segment.notice %}
+                obj = {notice: {
+                        id: "{{segment.notice.id}}",
+                        time: {{segment.notice.time}}}};
+            {% else %}
+                obj = {survey: {id: "{{segment.survey.id}}"}}
+            {% endif %}
+            args.videos.push(obj);
+        {% endfor %}
+
+        $("#message").hide();
+        $(".player_button").hide();
+        $(".play_button").show();
+        setPlayer('html');
+    });
+
+    function setPlayer(player_type) {
+        $('.player_content').hide();
+        if (player_type == 'html') {
+            $("#html5_player")[0].width = $(document).width() - 100;
+            $("#html5_player")[0].height = $(document).height() - 20;
+            player = new HTMLPlayer($("#html5_player")[0]);
+            $('.html5_content').show();
+        } else if (player_type == 'youtube') {
+            var params = { allowScriptAccess: "always" };
+            var atts = {id: "youtube_player"};
+            
+            swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&version=3", 
+                                "youtube_content", $(document).width() - 100, $(document).height() - 20, "8", null, null, params, atts);
+            $('.youtube_content').show();
+        }
+    }
+
+    function startSession(callback) {
+        var time = player.getCurrentTime();
+        $.post('/EEG/API/start_session',
+                {'content_group_name': args.content_group_name,
+                'content_name': current_video.name,
+                'csrfmiddlewaretoken': "{{csrf_token}}",
+                'content_time': time,
+                'viewer_name': JSON.stringify(args.viewer_names)}, // TODO: send auth token
+                callback)
+    }
+    
+    function stopSession(callback) {
+        var time = player.getCurrentTime();
+        $.post('/EEG/API/stop_session',
+                {'content_group_name': args.content_group_name,
+                'content_name': current_video.name,
+                'session_name': current_session,
+                'csrfmiddlewaretoken': "{{csrf_token}}",
+                'content_time': time,
+                'viewer_name': JSON.stringify(args.viewer_names)}, // TODO: send auth token
+                callback)
+    }
+    
+    function play() {
+        check_eeg_connection();
+        
+        player.load(current_video, function() {
+                resume()
+        });
+    }
+    
+    function resume() {
+        $(".player_button").hide();
+        $(".stop_button").show();
+        startSession(function(resp) {
+                if (resp.ok) {
+                    player.play();
+                    current_session = resp.session_name;
+                } else {
+                    // TODO: display failed to start error 
+                }
+        });
+    }
+
+    function stop() {
+        $(".player_button").hide();
+        $(".resume_button").show();
+        player.pause();
+        stopSession(); // check that closing the session didn't fail
+    }
+
+    function first_start() {
+        next();
+    }
+
+    function next() {
+        if (vid_index >= args.videos.length) {
+            // video over
+            $('#youtube_player').hide();
+            $('#message').show();
+        }
+        var segment = args.videos[vid_index];
+        if (segment.hasOwnProperty('video')) {
+            current_video = segment.video;
+            play();
+        } else if (segment.hasOwnProperty('notice')) {
+            show_notice(segment.notice);
+        } else {
+            show_survey(segment.survey);
+        }
+        vid_index += 1;
+    }
+
+    function show_notice(notice) {
+        $('.notice').hide();
+        $(".player").css({visibility: 'hidden'});
+        $("#notice_" + notice.id).show();
+        var t = this;
+        setTimeout(function() {
+                $('.notice').hide();
+                $(".player").css({visibility: 'visible'});
+                next.call(t);
+            }, notice.time);
+    }
+
+    function show_survey(survey) {
+        $('.survey').hide();
+        $(".player").css({visibility: 'hidden'});
+        $("#survey_" + survey.id).show();
+        $(".next_button").hide();
+        $('.survey').click(function() {
+                $(".next_button").show();
+            });
+    }
+    
+    function onPlayerStateChange(event) {        
+        // if video is over
+        if(event == 0) {  
+            stop();
+            next();
+        } 
+    }
+
+    function submit_survey(form) {
+        var outs = [];
+        $(form).find(':input').each(function(i, inp) {
+            if (inp.type == 'button') {
+                return;
+            }
+            if (inp.type != 'radio' || inp.checked) {
+                outs.push({'name': inp.name, 'val': inp.value});
+            }
+        });
+        $('.survey').hide();
+        $('.notice').hide();
+        $(".player").css({visibility: 'visible'});
+        var t = this;
+        $.post('/EEG/API/store_answers',
+                {'content_group_name': args.content_group_name,
+                'content_name': current_video.name,
+                'session_name': current_session,
+                'answers': JSON.stringify(outs),
+                'csrfmiddlewaretoken': "{{csrf_token}}",
+                'viewer_name': JSON.stringify(args.viewer_names)}, // TODO: send auth token
+                function() {next.call(t)})
+    }
+
+    function check_eeg_connection() {
+        $.get('/EEG/check_eeg_connection',
+                {'viewer_names': JSON.stringify(args.viewer_names)},
+                function(status) {
+                if (status != "OK") {
+                    alert('EEG not connected');
+                }});
+    }
+
+    function YTPlayerListener(event) {
+        if(event == 0) {  
+            stop();
+            next();
+        } 
+    }
+
+    function YTPlayer(ytplayer) {
+        this.player = ytplayer;
+        console.log('asdf');
+        this.player.addEventListener("onStateChange", "YTPlayerListener");
+    }
+
+    YTPlayer.prototype.getCurrentTime = function() {
+        return this.player.getCurrentTime();
+    }
+
+    YTPlayer.prototype.load = function(current_video, callback) {
+        var videoUrl = current_video.url;
+        var videoId = videoUrl.slice(videoUrl.length - 11);
+
+        this.player.loadVideoById(videoId, 0, "large");
+        this.player.pauseVideo();
+        callback();
+    }
+
+    YTPlayer.prototype.play = function() {
+        this.player.playVideo();
+    }
+
+    YTPlayer.prototype.pause = function() {
+        this.player.pauseVideo();
+    }
+
+    function HTMLPlayer(htmlplayer) {
+        this.player = htmlplayer;
+        htmlplayer.addEventListener("ended", function() {
+            stop();
+            next();
+        });
+    }
+
+    HTMLPlayer.prototype.getCurrentTime = function() {
+        return this.player.currentTime;
+    }
+
+    HTMLPlayer.prototype.load = function(current_video, callback) {
+        this.player.src = "https://s3.amazonaws.com/eeg-site-video/" + current_video.name + ".mp4"
+        this.player.onloadeddata = callback;
+        this.player.load();
+        this.player.pause();
+    }
+
+    HTMLPlayer.prototype.play = function() {
+        this.player.play();
+    }
+
+    HTMLPlayer.prototype.pause = function() {
+        this.player.pause();
+    }
+</script>
+
+{%endblock main%}

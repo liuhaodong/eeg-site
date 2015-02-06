@@ -1,0 +1,22 @@
+container_commands:
+  01_syncdb:    
+    command: "python manage.py syncdb --noinput"
+    leader_only: true
+  02_collectstatic:
+    command: "django-admin.py collectstatic --noinput"
+
+option_settings:
+  - namespace: aws:elasticbeanstalk:container:python:staticfiles
+    option_name: /static/
+    value: static/
+  - namespace: aws:elasticbeanstalk:container:python
+    option_name: WSGIPath
+    value: EEG/wsgi.py
+  - option_name: DJANGO_SETTINGS_MODULE
+    value: EEG.settings
+  - option_name: DJANGO_CONFIGURATION
+    value: Dev
+  - option_name: AWS_SECRET_KEY
+    value: EAd26fSL5yuV3pggZX1F15WYWZH+eA6peULWNEyI
+  - option_name: AWS_ACCESS_KEY_ID
+    value: AKIAJUIRM65WZQZ7ZDIQ
